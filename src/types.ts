@@ -41,7 +41,6 @@ function isActress(obj: any): obj is Actress {
     typeof obj.image === "string" &&
     Array.isArray(obj.most_famous_movies) &&
     obj.most_famous_movies.length === 3 &&
-    obj.most_famous_movies.every(movie => typeof movie === "string") &&
     typeof obj.awards === "string" &&
     [
       "American", "British", "Australian", "Israeli-American", "South African", 
@@ -49,3 +48,31 @@ function isActress(obj: any): obj is Actress {
     ].includes(obj.nationality)
   );
 }
+
+
+async function getActress(id: number): Promise<Actress | null> {
+  try {
+    const response = await fetch(`/actresses/${id}`);
+    
+    if (!response.ok) return null;
+
+    const data = await response.json();
+
+    if (isActress(data)) {
+      return data;
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Errore nel recupero dell'attrice:", error);
+    return null;
+  }
+}
+
+getActress(1).then(actress => {
+  if (actress) {
+    console.log("Attrice trovata:", actress.name);
+  } else {
+    console.log("Attrice non trovata o dato non valido.");
+  }
+});
