@@ -112,3 +112,21 @@ getAllActresses().then(actresses => {
     console.log("Nessuna attrice trovata o dati non validi.");
   }
 });
+
+
+
+async function getActresses(ids: number[]): Promise<(Actress | null)[]> {
+  const promises = ids.map(id => getActress(id));
+  const results = await Promise.all(promises);
+  return results; // array di Actress oppure null
+}
+
+getActresses([1, 2, 3, 999]).then(results => {
+  results.forEach((actress, index) => {
+    if (actress) {
+      console.log(`Attrice trovata: ${actress.name}`);
+    } else {
+      console.log(`Attrice con ID ${index + 1} non trovata.`);
+    }
+  });
+});
