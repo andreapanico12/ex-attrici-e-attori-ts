@@ -52,7 +52,7 @@ function isActress(obj: any): obj is Actress {
 
 async function getActress(id: number): Promise<Actress | null> {
   try {
-    const response = await fetch(`/actresses/${id}`);
+    const response = await fetch(`http://localhost:3333/actresses/${id}`);
     
     if (!response.ok) return null;
 
@@ -74,5 +74,41 @@ getActress(1).then(actress => {
     console.log("Attrice trovata:", actress.name);
   } else {
     console.log("Attrice non trovata o dato non valido.");
+  }
+});
+
+
+
+async function getAllActresses(): Promise<Actress[]> {
+  try {
+    const response = await fetch(`http://localhost:3333/actresses`);
+
+    if (!response.ok) {
+      console.error("Errore nella risposta del server");
+      return [];
+    }
+
+    const data = await response.json();
+
+    if (!Array.isArray(data)) {
+      console.warn("Il dato ricevuto non è un array");
+      return [];
+    }
+
+    // Filtra solo gli elementi che passano il controllo del type guard
+    const validActresses = data.filter(isActress);
+
+    return validActresses;
+  } catch (error) {
+    console.error("Errore nel recupero delle attrici:", error);
+    return [];
+  }
+}
+
+getAllActresses().then(actresses => {
+  if (actresses.length > 0) {
+    console.log(`Trovate ${actresses.length} attrici.`);
+  } else {
+    console.log("Nessuna attrice trovata o dati non validi.");
   }
 });
